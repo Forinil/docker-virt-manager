@@ -44,3 +44,5 @@ jobs:
             forinil/virt-manager:${{ env.COMMIT_SHORT_SHA }}
             ghcr.io/forinil/virt-manager:latest
             ghcr.io/forinil/virt-manager:${{ env.COMMIT_SHORT_SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
