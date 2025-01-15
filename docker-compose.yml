@@ -1,6 +1,6 @@
 services: 
   virt-manager:
-    image: mber5/virt-manager:latest
+    image: forinil/virt-manager:latest
     restart: always
     ports:
       - 8185:80
