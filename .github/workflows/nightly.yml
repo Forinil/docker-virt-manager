@@ -1,9 +1,8 @@
-name: Docker build from main branch
+name: Nightly Docker build
 
 on:
-  push:
-    branches:
-      - 'main'
+  schedule:
+    - cron:  '30 1 * * *'
 
 jobs:
   docker:
@@ -31,8 +30,10 @@ jobs:
         run: |
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
-      - name: Confirm git commit SHA output
-        run: echo ${{ env.COMMIT_SHORT_SHA }}    
+      - name: Store build timestamp
+        run: echo "BUILD_DATE=$(date +'%F')" >> $GITHUB_ENV    
+      - name: Confirm git commit SHA and timestamp output
+        run: echo "Short commit SHA ${{ env.COMMIT_SHORT_SHA }}, build date ${{ env.BUILD_DATE }}"
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -40,9 +41,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            forinil/virt-manager:latest
-            forinil/virt-manager:${{ env.COMMIT_SHORT_SHA }}
-            ghcr.io/forinil/virt-manager:latest
-            ghcr.io/forinil/virt-manager:${{ env.COMMIT_SHORT_SHA }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            forinil/virt-manager:nightly-latest
+            forinil/virt-manager:nightly-${{ env.COMMIT_SHORT_SHA }}-${{ env.BUILD_DATE }}
+            ghcr.io/forinil/virt-manager:nightly-latest
+            ghcr.io/forinil/virt-manager:nightly-${{ env.COMMIT_SHORT_SHA }}-${{ env.BUILD_DATE }}
